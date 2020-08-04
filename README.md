@@ -33,8 +33,9 @@ raw_data <- rbind(train, test) #merged dataset
 
 ## 4. Rename Variables
 
-I renamed the columns before performing the other steps to make referencing them easier.
-Subject identifiers and the type of activity were named accordingly. The other variables were named following the names given in features.txt of the original dataset.  
+I renamed the columns before performing the other steps to make referencing variables easier.
+The code names the subject identifier and the type of activity as `Subject ID` and `Activity`, respectively.
+It names the other variables following the names given in *features.txt* of the original dataset.
 ``` {r}
 features <- read.table("./features.txt") #read variable names  
 names(raw_data) <- c("Subject ID", "Activity", features$V2) #rename columns  
@@ -43,14 +44,14 @@ names(raw_data)
 
 ## 2. Extract the means & stdev for each measurement
 
-Along with the subject ID and the type of activity, only columns containing "mean()" or "std()" were extracted to create a data subset.  
+Along with the subject ID and the type of activity, the code only extracts columns with the variable names containing "mean()" or "std()" to create a data subset.  
 ``` {r}
 subset <- raw_data[, grepl("Subject ID|Activity|(mean\\())|(std\\())", names(raw_data))] #create data subset
 ```
 
 ## 3. Rename activities
 
-Levels in activity types were changed from the numbers 1:5 to more descriptive levels following activity_labels.txt of the original dataset.  
+Levels in activity types are changed from the numbers 1:5 to more descriptive levels following *activity_labels.txt* of the original dataset.  
 ``` {r}
 library(plyr)
 subset$Activity <- mapvalues(subset$Activity, from = c(1:6),   
@@ -60,17 +61,17 @@ subset$Activity <- mapvalues(subset$Activity, from = c(1:6),
                                    
 ## 5. Create Tidy Dataset
 
-I obtained averages of the means and the standard deviations (std) for each subject and for each activity type, resulting in a separate row of variable averages for each subject-activity pair.  
+Averages of the means and the standard deviations (std) is obtained for each subject and for each activity type, resulting in a separate row for each subject-activity pair and their variable averages.
 ``` {r}
 tidy_data <- aggregate(subset[, -(1:2)], list(subset$`Subject ID`, subset$Activity), mean)
 ```
 
-The first two columns were renamed to be more descriptive and for more consistency.  
+The first two columns are renamed to be more descriptive and for more consistency.  
 ``` {r}
 names(tidy_data)[1:2] <- c("Subject ID", "Activity")
 ```
 
-A txt file, tidy_data.txt, was created from the dataset.  
+A txt file, tidy_data.txt, is created from the dataset.  
 ``` {r}
 write.table(tidy_data, file = "tidy_data.txt", row.names = FALSE)
 ```
